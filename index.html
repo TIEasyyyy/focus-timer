@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专注计时器 - Focus Timer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 导航菜单 -->
+        <nav class="navbar">
+            <div class="nav-content">
+                <h1 class="logo">⏱️ 专注计时器</h1>
+                <div class="nav-buttons">
+                    <button class="nav-btn active" onclick="switchPage('timer')">计时</button>
+                    <button class="nav-btn" onclick="switchPage('stats')">统计</button>
+                    <button class="nav-btn" onclick="switchPage('review')">复盘</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 计时页面 -->
+        <div id="timerPage" class="page active">
+            <div class="timer-container">
+                <div class="timer-card">
+                    <h2>今日专注时间</h2>
+                    <div class="today-focus">
+                        <span id="todayFocusTime">0小时 0分钟</span>
+                    </div>
+                </div>
+
+                <div class="timer-card main-timer">
+                    <h2>计时设置</h2>
+                    <div class="input-group">
+                        <label>工作时长（分钟）</label>
+                        <input type="number" id="workDuration" value="25" min="1" max="120">
+                    </div>
+                    <div class="input-group">
+                        <label>休息时长（分钟）</label>
+                        <input type="number" id="breakDuration" value="5" min="1" max="60">
+                    </div>
+
+                    <div class="timer-display">
+                        <div class="timer-circle">
+                            <span id="timerText">25:00</span>
+                        </div>
+                        <div class="timer-status">
+                            <p id="statusText">准备就绪</p>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="startBtn" onclick="startTimer()">开始</button>
+                        <button class="btn btn-secondary" id="pauseBtn" onclick="pauseTimer()" disabled>暂停</button>
+                        <button class="btn btn-danger" id="resetBtn" onclick="resetTimer()">重置</button>
+                    </div>
+                </div>
+
+                <!-- 右下角小计时器 -->
+                <div class="mini-timer" id="miniTimer">
+                    <div class="mini-timer-content">
+                        <span id="miniTimerText">25:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 统计页面 -->
+        <div id="statsPage" class="page">
+            <div class="stats-container">
+                <div class="stats-card">
+                    <h2>本周专注统计</h2>
+                    <div id="weekChart" style="height: 300px;"></div>
+                </div>
+
+                <div class="stats-card">
+                    <h2>最近7天详情</h2>
+                    <div id="statsList" class="stats-list">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <h2>本月总计</h2>
+                    <div class="stats-summary">
+                        <div class="summary-item">
+                            <span class="label">总专注时间</span>
+                            <span class="value" id="totalFocusTime">0小时</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">平均每天</span>
+                            <span class="value" id="avgFocusTime">0分钟</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">工作天数</span>
+                            <span class="value" id="workDays">0天</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 复盘页面 -->
+        <div id="reviewPage" class="page">
+            <div class="review-container">
+                <div class="review-header">
+                    <h2>📝 每日复盘</h2>
+                    <p id="reviewDate">2024年1月1日</p>
+                </div>
+
+                <form id="reviewForm" class="review-form">
+                    <!-- 1. 睡眠 -->
+                    <div class="review-section">
+                        <h3>1. 睡眠</h3>
+                        <div class="form-group">
+                            <label>入睡时间</label>
+                            <input type="time" name="sleepTime" id="sleepTime">
+                        </div>
+                        <div class="form-group">
+                            <label>起床时间</label>
+                            <input type="time" name="wakeTime" id="wakeTime">
+                        </div>
+                        <div class="form-group">
+                            <label>主观精力（1-10）</label>
+                            <input type="range" name="energy" id="energy" min="1" max="10" value="5">
+                            <span id="energyValue">5</span>
+                        </div>
+                    </div>
+
+                    <!-- 2. 今日计划 -->
+                    <div class="review-section">
+                        <h3>2. 今日计划</h3>
+                        <div class="form-group">
+                            <label>计划完成的任务与专注块</label>
+                            <textarea name="plan" placeholder="例如：论文-2小时，考编复习-3小时..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 3. 实际产出 -->
+                    <div class="review-section">
+                        <h3>3. 实际产出</h3>
+                        <div class="form-group">
+                            <label>论文</label>
+                            <textarea name="paperOutput" placeholder="今天在论文上的进展..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>考编/其他任务</label>
+                            <textarea name="otherOutput" placeholder="考编复习或其他工作内容..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>生活事务</label>
+                            <textarea name="lifeOutput" placeholder="完成的生活相关任务..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 4. 时间节点 -->
+                    <div class="review-section">
+                        <h3>4. 时间节点</h3>
+                        <div class="form-group">
+                            <label>第一次开始工作</label>
+                            <input type="time" name="firstWork">
+                        </div>
+                        <div class="form-group">
+                            <label>最后停止工作</label>
+                            <input type="time" name="lastWork">
+                        </div>
+                        <div class="form-group">
+                            <label>社交媒体大致用时（分钟）</label>
+                            <input type="number" name="socialTime" min="0" placeholder="0">
+                        </div>
+                    </div>
+
+                    <!-- 5. 最大偏离 -->
+                    <div class="review-section">
+                        <h3>5. 最大偏离</h3>
+                        <div class="form-group">
+                            <label>发生了什么</label>
+                            <textarea name="deviation" placeholder="今天最大的偏离是什么..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>我认为主要原因是</label>
+                            <textarea name="deviationReason" placeholder="主要原因分析..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 6. 有效做法 -->
+                    <div class="review-section">
+                        <h3>6. 有效做法</h3>
+                        <div class="form-group">
+                            <label>今天哪项做法值得明天保留</label>
+                            <textarea name="effectivePractice" placeholder="哪些做法效果很好，明天继续..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 7. 情绪状态 -->
+                    <div class="review-section">
+                        <h3>7. 情绪状态</h3>
+                        <div class="form-group">
+                            <label>最明显的情绪及触发点</label>
+                            <textarea name="mood" placeholder="今天的情绪变化及原因..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 8. 我的判断 -->
+                    <div class="review-section">
+                        <h3>8. 我的判断</h3>
+                        <div class="form-group">
+                            <label>今天总体表现如何</label>
+                            <textarea name="performance" placeholder="自我评价..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>明天最重要的一件事</label>
+                            <textarea name="nextPriority" placeholder="明天的首要任务..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 9. 明日初步计划 -->
+                    <div class="review-section">
+                        <h3>9. 明日初步计划</h3>
+                        <div class="form-group">
+                            <label>任务、专注块和固定事务</label>
+                            <textarea name="tomorrowPlan" placeholder="明天的计划..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 10. 需要辅助判断的问题 -->
+                    <div class="review-section">
+                        <h3>10. 需要辅助判断的问题</h3>
+                        <div class="form-group">
+                            <label>只写一个</label>
+                            <textarea name="question" placeholder="需要思考或寻求帮助的问题..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="button-group" style="margin-top: 30px;">
+                        <button type="submit" class="btn btn-primary">保存复盘</button>
+                        <button type="button" class="btn btn-secondary" onclick="viewPastReview()">查看历史复盘</button>
+                    </div>
+                </form>
+
+                <!-- 历史复盘列表 -->
+                <div id="pastReviewsList" class="past-reviews" style="display: none;">
+                    <h3>历史复盘记录</h3>
+                    <div id="reviewsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
