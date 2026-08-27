@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>专注计时器 - Focus Timer</title>
     <link rel="stylesheet" href="style.css">
+    <!-- 引入 ECharts 库用于绘制图表 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -69,8 +71,8 @@
         <!-- 统计页面 -->
         <div id="statsPage" class="page">
             <div class="stats-container">
-                <div class="stats-card">
-                    <h2>本周专注统计</h2>
+                <div class="stats-card full-width">
+                    <h2>本周专注时间统计</h2>
                     <div id="weekChart" style="height: 300px;"></div>
                 </div>
 
@@ -107,6 +109,41 @@
                 <div class="review-header">
                     <h2>📝 每日复盘</h2>
                     <p id="reviewDate">2024年1月1日</p>
+                </div>
+
+                <!-- 自动生成的时间统计卡片 -->
+                <div class="auto-data-section">
+                    <h3>📊 今日数据统计（自动生成）</h3>
+                    <div class="auto-data-cards">
+                        <div class="auto-data-card">
+                            <span class="label">今日专注总时长</span>
+                            <span class="value" id="autoTodayTotal">0小时 0分钟</span>
+                        </div>
+                        <div class="auto-data-card">
+                            <span class="label">第一次工作时间</span>
+                            <span class="value" id="autoFirstWork">-</span>
+                        </div>
+                        <div class="auto-data-card">
+                            <span class="label">最后工作时间</span>
+                            <span class="value" id="autoLastWork">-</span>
+                        </div>
+                        <div class="auto-data-card">
+                            <span class="label">工作时长</span>
+                            <span class="value" id="autoWorkDuration">-</span>
+                        </div>
+                    </div>
+
+                    <!-- 专注时间分布图 -->
+                    <div class="chart-section">
+                        <h4>⏰ 今日专注时间分布</h4>
+                        <div id="focusDistributionChart" style="height: 250px;"></div>
+                    </div>
+
+                    <!-- 一周对比图 -->
+                    <div class="chart-section">
+                        <h4>📈 一周专注时间对比</h4>
+                        <div id="weekComparisonChart" style="height: 250px;"></div>
+                    </div>
                 </div>
 
                 <form id="reviewForm" class="review-form">
@@ -158,12 +195,14 @@
                     <div class="review-section">
                         <h3>4. 时间节点</h3>
                         <div class="form-group">
-                            <label>第一次开始工作</label>
-                            <input type="time" name="firstWork">
+                            <label>第一次开始工作（自动填充，可修改）</label>
+                            <input type="time" name="firstWork" id="firstWorkInput">
+                            <small style="color: #999; display: block; margin-top: 5px;">💡 系统已自动检测，如不准确可手动修改</small>
                         </div>
                         <div class="form-group">
-                            <label>最后停止工作</label>
-                            <input type="time" name="lastWork">
+                            <label>最后停止工作（自动填充，可修改）</label>
+                            <input type="time" name="lastWork" id="lastWorkInput">
+                            <small style="color: #999; display: block; margin-top: 5px;">💡 系统已自动检测，如不准确可手动修改</small>
                         </div>
                         <div class="form-group">
                             <label>社交媒体大致用时（分钟）</label>
